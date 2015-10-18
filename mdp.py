@@ -26,15 +26,22 @@ class State :
         best = max([(self.computeEU(a), a) for a in self.actions])
         return best[1]
 
+    def findMax(self) :
+        best = max([(self.computeEU(a), a) for a in self.actions])
+        print best[0]
+        return best[0]
+
 
 
 class Map :
     def __init__(self) :
-        self.states = {}
-        self.stop_crit = 0.01
+        self.states = {}  ###this is some sort of 2-dimensional array
+        self.stop_crit = 0.001
         self.gamma = 0.8
         self.n_rows = 0
         self.n_cols = 0
+        self.newUtility = 0
+        self.maxChange = 1
     
     class PrintType :
         ACTIONS = 0
@@ -42,7 +49,22 @@ class Map :
 
     ### you write this method
     def valueIteration(self) :
-        ### 1. initialize utilities to 0
+        ### initialises utilities to 0
+        for r in range(self.n_rows) :
+            for c in range(self.n_cols) :
+                if not self.states[(c,r)].isGoal : ###non-goal states
+                    self.states[(c,r)].utility=0
+
+        while self.maxChange>self.stop_crit :
+            for r in range(self.n_rows) :
+                for c in range(self.n_cols) :
+                    if not self.states[(c,r)].isGoal : ###non-goal states
+                        self.maxChange=0
+                        self.newUtility = self.states[(c,r)].reward + self.gamma*self.states[(c,r)].findMax() ### bellman
+                        if abs(self.newUtility - self.states[(c,r)].utility) > self.maxChange :
+                            self.maxChange = abs(self.newUtility - self.states[(c,r)].utility) 
+                        self.states[(c,r)].utility=self.newUtility
+                        print self.maxChange
         ### 2. repeat value iteration loop until largest change is smaller than
         ###    stop criterion
         
