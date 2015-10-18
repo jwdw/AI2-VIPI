@@ -35,7 +35,7 @@ class State :
 
 class Map :
     def __init__(self) :
-        self.states = {}  ###this is some sort of 2-dimensional array
+        self.states = {}
         self.stop_crit = 0.001
         self.gamma = 0.8
         self.n_rows = 0
@@ -47,14 +47,15 @@ class Map :
         ACTIONS = 0
         VALUES = 1
 
-    ### you write this method
+
     def valueIteration(self) :
         ### initialises utilities to 0
         for r in range(self.n_rows) :
             for c in range(self.n_cols) :
                 if not self.states[(c,r)].isGoal : ###non-goal states
                     self.states[(c,r)].utility=0
-
+        ### repeat value iteration loop until largest change is smaller than
+        ### stop criterion
         while self.maxChange>self.stop_crit :
             for r in range(self.n_rows) :
                 for c in range(self.n_cols) :
@@ -65,12 +66,7 @@ class Map :
                             self.maxChange = abs(self.newUtility - self.states[(c,r)].utility) 
                         self.states[(c,r)].utility=self.newUtility
                         print self.maxChange
-        ### 2. repeat value iteration loop until largest change is smaller than
-        ###    stop criterion
-        
-        pass #placeholder, delete when implementing
-        
-        
+   
 
     ### you write this method
     def policyIteration(self) :
