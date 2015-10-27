@@ -28,7 +28,6 @@ class State :
 
     def findMax(self) :
         best = max([(self.computeEU(a), a) for a in self.actions])
-        print best[0]
         return best[0]
 
 
@@ -42,6 +41,8 @@ class Map :
         self.n_cols = 0
         self.newUtility = 0
         self.maxChange = 1
+        self.hasChanged = True
+        self.newAction = None
     
     class PrintType :
         ACTIONS = 0
@@ -65,15 +66,28 @@ class Map :
                         if abs(self.newUtility - self.states[(c,r)].utility) > self.maxChange :
                             self.maxChange = abs(self.newUtility - self.states[(c,r)].utility) 
                         self.states[(c,r)].utility=self.newUtility
-                        print self.maxChange
    
 
     ### you write this method
     def policyIteration(self) :
         ### 1. initialize random policy
+        for r in range(self.n_rows) :
+            for c in range(self.n_cols) :
+                if not self.states[(c,r)].isGoal : ###non-goal states
+                    self.states[(c,r)].policy=random.choice(self.states[(c,r)].actions)
+
+        while self.hasChanged :
+            self.hasChanged = False
+            for r in range(self.n_rows) :
+                for c in range(self.n_cols) :
+                    self.calculateUtilitiesLinear()
+                    self.newAction=self.states[(c,r)].selectBestAction()
+                    if self.newAction != self.states[(c,r)].policy :
+                        hasChanged = 1 ### if any new action is different than the last one, continue the while-loop
+                    self.states[(c,r)].policy=self.newAction
+
         ### 2 repeat policy iteration loop until policy is stable
     
-        pass #placeholder, delete when implementing
     
     def calculateUtilitiesLinear(self) :
         n_states = len(self.states)
